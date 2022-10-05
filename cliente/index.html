@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <title>Myfit App</title>
+    <style>
+        .seccion{display: none;}
+        .activa{display: block;}
+    </style>
+    <link rel="stylesheet" href="style.css">
+  </head>
+<body>
+  <h1>MyFitApp</h1> 
+    <div class="seccion activa" id="login">
+      <h2>Login</h2>
+      <p><b>Nombre</b></p>
+      <input id="loginMedico"</input>
+      <p><b>Password</b></p>
+      <input id="pass" type="password" </input>
+      <br>
+      <button type="submit" onclick="controlarAcceso()">Login</button>
+    </div>  
+
+
+  <div id="listado" class="seccion">
+    <h2>Listado de pacientes</h2>
+    <p id="bienvenida"></p>
+    <ul id="pacientes"></ul> 
+    <button id="agregarBut" onclick="cambiarA_agregarPac()">Agregar Paciente</button>
+    <button id="salirBut" onclick="salir()">Salir</button>
+  </div>
+
+  <div id="agregarPaciente" class="seccion">
+      <h3>Agregar nuevo paciente</h3>
+      <p>Rellene el siguiente formulario: </p>
+      <p><b>Nombre</b></p>
+      <input id="nombreNuevoPaciente"</input>
+      <p><b>Fecha de nacimiento</b></p>
+      <input type="date" id="fechaNacimNuevoPaciente"/>
+      <p><b>Genero</b></p>
+      <select name="generoNuevoPaciente" id="generoNuevoPaciente">
+        <option value="Hombre">HOMBRE</option>
+        <option value="Mujer">MUJER</option>
+      </select>
+      <p><b>Codigo de acceso</b></p>
+      <input id="codigoAccesoNuevoPaciente"</input>
+      <p><b>Observaciones</b></p>
+      <input id="obersvacionesNuevoPaciente"</input><br>
+      <br>
+      <button id="agBut" onclick="agregarPaciente()">Agregar Paciente</button>
+      <button id="eraseBut" onclick="salirlistado()">Salir</button>
+  </div>
+  
+  <div id="expedientePac" class="seccion">
+    <h4>Expediente del paciente</h4>
+    <p>Estos son los datos del paciente seleccionado: </p>
+    <ul id="listadatos"></ul>
+    <h3>Modificar datos paciente</h3>
+    <p>Rellena el formulario y luego pulsa el boton 'Modificar'</p>
+    <div id="form1">
+      <p><b>Nombre</b></p>
+      <input id="nombreNuevoPaciente2"</input>
+      <p><b>Fecha de nacimiento</b></p>
+      <input type="date" id="fechaNacimNuevoPaciente2"/>
+      <p><b>Genero</b></p>
+      <select name="generoNuevoPaciente2">
+        <option value="Hombre">HOMBRE</option>
+        <option value="Mujer">MUJER</option>
+      </select>
+      <p><b>Codigo de acceso</b></p>
+      <input id="codigoAccesoNuevoPaciente2"</input>
+      <p><b>Observaciones</b></p>
+      <input id="obersvacionesNuevoPaciente2"</input>
+      <br><br>
+    </div>
+    <div id="variablesPac">
+    <h5>Variables del paciente</h5> <br>
+    <ul id="listaVariables"></ul>
+        <p><b>Selecciona una variable para filtrar las muestras:</b></p> 
+        <select id="listaVariables1">
+            <option value="1">Peso</option>
+            <option value="2">Metros</option>
+            <option value="3">Minutos de ejercicio</option>
+            <option value="4">Ritmo Cardiaco</option>
+            <option value="5">Pasos</option>
+            <option value="6">Calorias consumidas</option>
+            <option value="7">Energia en reposo</option>
+            <option value="8">Horas de sueño</option>
+            <option value="9">Todas</option>
+        </select>
+        <button onclick="Filtrar()">Filtrar</button>
+    <button onclick="salirlistado()">Salir</button>
+    </div>
+  </div>
+ 
+  <script src="rest.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

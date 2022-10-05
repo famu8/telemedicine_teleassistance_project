@@ -1,0 +1,12 @@
+body {
+    background-image: linear-gradient(to right, rgba(99, 233, 117, 0), rgb(141, 243, 150));
+  } 
+  #login{
+    text-align: center;
+    font-size: 30px;
+  }
+  h1 {
+    font-size: 60px;
+    text-align: center;
+    color: rgb(97, 126, 99)
+}

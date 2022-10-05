@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>MyFitApp Paciente</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="rest.js"></script>  
+    <script src="rpc.js"></script>   
+    <script src="mainPaciente.js"></script>
+    <style>
+        .seccion{display: none;}
+        .activa{display: block;}
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="seccion activa" id="login">
+        <h1>MyFitApp Pacientes</h1>
+        <label>Codigo Acceso:  <input type="text" id="codAcc"></label>
+        <br>
+        <button onclick="logearAsincrono()">Log in</button>
+    </div>
+    <div class="seccion" id="listaPacientes">
+        <h2>Menu principal</h2>
+        <div id="bienvenida"></div>
+        <p><b>Selecciona una variable para mostrar su evolución:</b></p>
+        <select id="filtrar">
+            <option value="0">Mostrar todas</option>
+            <option value="1">Peso</option>
+            <option value="2">Metros</option>
+            <option value="3">Minutos de ejercicio</option>
+            <option value="4">Ritmo Cardiaco</option>
+            <option value="5">Pasos</option>
+            <option value="6">Calorias quemadas</option>
+            <option value="7">Energia en reposo</option>
+            <option value="8">Horas de sueño</option>
+        </select>
+        <button onclick="mostrarMuestras()">Filtrar</button>
+        <p><b>Listado muestras:</b></p>
+        <ul id="listaMuestras"></ul>
+        <p><b>Selecciona una variable para añadir una muestra:</b></p> 
+        <select id="listaVariables">
+            <option value="1">Peso</option>
+            <option value="2">Metros</option>
+            <option value="3">Minutos de ejercicio</option>
+            <option value="4">Ritmo Cardiaco</option>
+            <option value="5">Pasos</option>
+            <option value="6">Calorias quemadas</option>
+            <option value="7">Energia en reposo</option>
+            <option value="8">Horas de sueño</option>
+        </select>
+        <br>
+        <label>Fecha:  <input type="datetime-local" id="fechaNuevaMuestra"></label><br>
+        <label>Valor:  <input type="number" id="valorNuevaMuestra"></label><br>
+        <button onclick="anyadirMuestras()">Añadir</button>
+        <br><br>
+        <br><br>
+        <button onclick="salir()">Salir</button>
+    </div>
+    <div class="seccion" id="divCompartir">
+        <h3>COMAPRTE TUS LOGROS</h3>
+        <p>¡En esta página podrás compartir tus logros con los usuarios que quieras!</p>
+        <p>Selecciona los usuarios a compartir: </p>
+        <select name="formCompartir" id="formCompartir"></select>
+        <button onclick="enviar()">Enviar</button>
+        <button onclick="cambiarSeccion('listaPacientes')">Volver</button>
+    </div>
+</body>
+</html>
