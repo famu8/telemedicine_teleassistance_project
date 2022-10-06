@@ -351,7 +351,6 @@ app.registerAsync(eliminarMuestra);
 ///////PARTE DEL WEBSOCKET////////////////////////////
 // Crear un servidor HTTP
 var http = require("http");
-const { restart } = require("nodemon");
 var httpServer = http.createServer();
 //Creo el sevidor ws
 var WebSocketServer= require("websocket").server; 

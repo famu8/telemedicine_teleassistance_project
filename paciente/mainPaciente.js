@@ -1,4 +1,4 @@
-var app = rpc("localhost", "MiGestionPacientes");
+var app = rpc("172.20.10.6", "MiGestionPacientes");
 
 
 // debo definir las funciones que recojo del servidor 
