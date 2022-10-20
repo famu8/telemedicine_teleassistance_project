@@ -1,4 +1,4 @@
-var app = rpc("172.20.10.6", "MiGestionPacientes");
+var app = rpc("localhost", "MiGestionPacientes");
 
 
 // debo definir las funciones que recojo del servidor 
@@ -286,6 +286,45 @@ function enviar(){
 
 
 
+
+
+//empezamos con el bluetootht
+
+
+
+//EMPEZAMOS CON EL BLUETOOTH
+
+function tomarPeso(){
+    bluetoothle.initialize(function (result) {
+        if (result.status === "enabled") {
+        console.log("Bluetooth encendido");
+        } else {
+        console.og("Bluetooth apagado:");
+        } 
+        },function (error) {
+        console.log("Error inicializando BLE", error);
+        }, { request: true, statusReceiver: false });
+        
+
+    bluetoothle.connect(function (result) {
+        if (result.status === "connected") {
+        console.log("Termometro conectado");
+        }
+        else if (result.status === "disconnected") {
+        console.log("Termometro desconectado");
+        }
+        }, function (error) {
+        console.log("Error conectando:", error);
+        }, { address: "B4:99:4C:5A:BB:CD" });
+
+    bluetoothle.discover(function (result) {
+        if (result.status === "discovered") {
+        log("Servicios descubiertos. Ya puedo leer");
+        }
+        }, function (error) {
+        console.log("Error descubriendo:", error);
+        }, { address: "B4:99:4C:5A:BB:CD" });
+} 
 
 
 

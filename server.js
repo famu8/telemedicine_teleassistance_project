@@ -316,14 +316,27 @@ function eliminarMuestra(idValor,callback){
         }else{ 
             callback(true);
         }
-
     });
 }
 
 
+function anyadirPeso(peso,idPaciente,fecha,callback){
+    var idPeso=1;
+    var sql = "INSERT INTO muestras (idPaciente_muestras,idVariable_muestras,valorMuestra, fechaMuestra) VALUES ('"+idPaciente+"','"+idPeso+"','"+peso+"','"+fecha+"')";
+    connection.query(sql, (error, resultado)=>{
+        if(error){
+            callback(false);
+        }else{ 
+            callback(true);
+        }
+    });
+
+}
+
 var servidor = rpc.server();
 var app = servidor.createApp("MiGestionPacientes");
 
+app.registerAsync(anyadirPeso);
 app.registerAsync(listadoMuestras);
 app.registerAsync(login);
 app.registerAsync(datosMedico);

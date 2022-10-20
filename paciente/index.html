@@ -9,6 +9,7 @@
     <script src="rest.js"></script>  
     <script src="rpc.js"></script>   
     <script src="mainPaciente.js"></script>
+    <script src="cordova.js"></script>
     <style>
         .seccion{display: none;}
         .activa{display: block;}
@@ -56,6 +57,15 @@
         <label>Valor:  <input type="number" id="valorNuevaMuestra"></label><br>
         <button onclick="anyadirMuestras()">Añadir</button>
         <br><br>
+        <br><br>
+        <div id="botonTomarPeso">
+            <p>Pulsa el siguiente boton para registrar tu peso</p>
+            <button id="botonPeso" onclick="tomarPeso()">Tomar</button>
+        </div>
+
+
+
+
         <br><br>
         <button onclick="salir()">Salir</button>
     </div>
