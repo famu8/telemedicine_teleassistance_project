@@ -58,17 +58,87 @@
         <button onclick="anyadirMuestras()">Añadir</button>
         <br><br>
         <br><br>
-        <div id="botonTomarPeso">
-            <p>Pulsa el siguiente boton para registrar tu peso</p>
-            <button id="botonPeso" onclick="tomarPeso()">Tomar</button>
+        <div id="botonRanking">
+            <p>Pulsa el siguiente boton para ver el ranking autonomico</p>
+            <button onclick="cambiar_a_ranking_auto()">Ver ranking autonomico</button>
         </div>
-
-
-
+        <div id="botonRanking_nac">
+            <p>Pulsa el siguiente boton para ver el ranking nacional</p>
+            <button onclick="cambiar_a_ranking_nac()">Ver ranking nacional</button>
+        </div>
+        <div>
+            <p>Pulse para sincronizar los cambios</p>
+            <button onclick="enviarDatos()">Sincronizar</button>
+        </div>
+        <div>
+            <p>Pulse para ver la media del peso nacional</p>
+            <button onclick="rankNacional()">Media peso nacional</button>
+        </div>
 
         <br><br>
         <button onclick="salir()">Salir</button>
     </div>
+    
+    <div id="seccionAutonomica" class="seccion">
+        <h2>Aqui puedes ver el ranking autonomico</h2>
+        <label>Variable:</label><br>
+        <select id="comu_variable">
+            <option value="-">-</option>
+            <option value="peso">Peso</option>
+            <option value="metros_andados">Metros andados</option>
+            <option value="metros_corridos">Metros corridos</option>
+        </select>
+        <br>
+        <label>Comunidad autónoma:</label><br>
+            <select id="comu_auto">
+                <option value="-">-</option>
+                <option value="1">Andalucia</option>
+                <option value="2">Aragon</option>
+                <option value="3">Asturias</option>
+                <option value="4">Islas Baleares</option>
+                <option value="5">Canarias</option>
+                <option value="6">Cantabria</option>
+                <option value="7">Castilla-La Mancha</option>
+                <option value="8">Castilla y León</option>
+                <option value="9">Cataluña</option>
+                <option value="10">Comunidad de Madrid</option>
+                <option value="11">Comunidad Foral de Navarra</option>
+                <option value="12">Comunidad Valenciana</option>
+                <option value="13">Extremadura</option>
+                <option value="14">Galicia</option>
+                <option value="15">Pais Vasco</option>
+                <option value="16">Principado de Asturias</option>
+                <option value="17">Region de Murcia</option>
+                <option value="18">La Rioja</option>
+            </select>  
+            <br>
+            <p>Pulsa el boton para ver el resultado:</p>   
+            <button onclick="rankAutonom()">Ranking</button>
+            <p>Posicion | Nombre | Valor</p>
+            <ul id="listaRanking"></ul>
+            <br><br>
+            <button onclick="cambiarSeccion('listaPacientes')">Volver</button>
+        </div>
+
+    <div id="seccionNacional" class="seccion">
+        <h2>Aqui puedes ver el ranking nacional</h2>
+        <label>Variable:</label><br>
+        <select id="variable">
+            <option value="-">-</option>
+            <option value="peso">Peso</option>
+            <option value="metros_andados">Metros andados</option>
+            <option value="metros_corridos">Metros corridos</option>
+        </select>
+        <br>
+        <p>Pulsa el boton para ver el resultado:</p>   
+        <button onclick="rankNacional()">Ranking</button>
+        <p>Posicion | Nombre | Valor</p>
+        <ul id="listaRankingNacional"></ul>
+        <br><br>
+        <button onclick="cambiarSeccion('listaPacientes')">Volver</button>
+    </div>
+
+
     <div class="seccion" id="divCompartir">
         <h3>COMAPRTE TUS LOGROS</h3>
         <p>¡En esta página podrás compartir tus logros con los usuarios que quieras!</p>

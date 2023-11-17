@@ -162,6 +162,169 @@ function eliminarMain(idValor){
 
 
 
+//////////////////////////////////
+// PRACTICA 3 //
+
+var express = require("express");
+var appRest = express();
+appRest.use(express.json()); 
+
+
+
+function enviarDatos(){
+    const id_area=10;
+    const today = new Date().toISOString().slice(0, 10);
+    console.log(today)
+    const envio ={
+        "id_area":id_area,
+        "fecha":today,
+        "datos":[]
+    };
+    listadoMuestras(idPacienteGlobal,(muestras)=>{
+        for (let i = 0; i < muestras.length; i++) {
+            var element = muestras[i];
+            if (element.idVariable_muestras in [1,2,9]){
+                if (element.idVariable_muestras==1) {   
+                    envio.datos.push({"paciente":pacienteGlobal.nombrePaciente, 
+                    "fecha":element.fechaMuestra, "valor":element.valorMuestra, "variable": "peso"});
+                }else if(element.idVariable_muestras==2){
+                    envio.datos.push({"paciente":pacienteGlobal.nombrePaciente, 
+                    "fecha":element.fechaMuestra, "valor":element.valorMuestra, "variable": "metros_andados"});
+                }else{
+                    envio.datos.push({"paciente":pacienteGlobal.nombrePaciente, 
+                    "fecha":element.fechaMuestra, "valor":element.valorMuestra, "variable": "metros_corridos"});
+                }       
+            }
+            
+        }
+        rest.post('https://undefined.ua.es/telemedicina/api/datos', envio ,function (estado, respuesta) {
+        console.log(respuesta);
+        if (estado == 201) {
+            alert("Datos enviados al servidor. Felicidades");
+            console.log("Los datos del paciente han sido enviados correctamente");
+        }else{
+            alert("Error en el envio de los datos al ministerio...");
+        }
+    });
+    });
+}
+
+
+
+
+function cambiar_a_ranking_auto(){
+    cambiarSeccion("seccionAutonomica");
+}
+
+function cambiar_a_ranking_nac(){
+    cambiarSeccion("seccionNacional");
+}
+
+
+function es_un_objeto(obj){
+    return Object.prototype.toString.call(obj) === '[object Object]'
+}
+
+
+
+function rankAutonom(){
+    var comunidad = document.getElementById("comu_auto").value;
+    var variable = document.getElementById("comu_variable").value;
+    if (comunidad != "-" || variable != "-") {
+        rest.get('https://undefined.ua.es/telemedicina/api/datos',function (estado, respuesta) {
+            var datos = [];
+            if (estado == 200) {
+                for (var i = 0; i < respuesta.length; i++) {      
+                        for (let j = 0; j < respuesta[i].datos.length; j++) {
+                            var element = respuesta[i].datos[j];
+                            if (es_un_objeto(element)) {
+                                try {
+                                    if(element.variable==variable && respuesta[i].id_area==comunidad && element.valor &&  typeof element.paciente === 'string'){
+                                        if(typeof element.valor ==='number' && element.paciente != "" && element.paciente != undefined){
+                                            datos.push({'paciente':element.paciente,'valor':parseFloat(element.valor), 'comunidad':respuesta[i].id_area});
+                                        }
+                                    } 
+                                }catch(err) {
+                                    console.log(err.message);
+                                }
+                            }
+                        }
+                     
+                }
+                datos.sort( (a, b) => {
+                    if(a.valor < b.valor) {
+                      return 1;
+                    }
+                    if(a.valor > b.valor) {
+                      return -1;
+                    }
+                    return 0;});
+                
+                document.getElementById('listaRanking').innerHTML ="";
+                for (let i = 0 ; i < datos.length; i++){
+                    if (i == 20) {
+                        break;
+                    }else{
+                        document.getElementById('listaRanking').innerHTML += "<li>"+ String(i+1) + "----" + String(datos[i].paciente) + "----"+  String(datos[i].valor) +"</li>"
+                    }
+                }
+            }else{
+                alert("Error en el envio de los datos");
+            }
+        });
+    }else{
+        alert("Debe seleccionar variable y comunidad autonoma.");
+    }
+
+    
+}
+
+
+function rankNacional(){
+    var variable = document.getElementById("variable").value;
+    if (variable != "-") {
+        rest.get('https://undefined.ua.es/telemedicina/api/datos',function (estado, respuesta) {
+            var datos = [];
+            if (estado == 200) {
+                for (var i = 0; i < respuesta.length; i++) {     
+                    for (let j = 0; j < respuesta[i].datos.length; j++) {
+                        const element = respuesta[i].datos[j];
+                        if (es_un_objeto(element)) {
+                            try {
+                                if(element.variable == variable &&  typeof element.valor ==='number' &&  typeof element.paciente === 'string' && element.paciente != "" &&element.paciente != undefined){
+                                    datos.push({'paciente':element.paciente,'valor':element.valor});
+                                } 
+                            }catch(err) {
+                                console.log(err.message);
+                            }
+                        }
+                    } 
+                }
+                datos.sort( (a, b) => {
+                    if(a.valor < b.valor) {
+                      return 1;
+                    }
+                    if(a.valor > b.valor) {
+                      return -1;
+                    }
+                    return 0;});
+
+                document.getElementById('listaRankingNacional').innerHTML ="";
+                for (let i = 0 ; i < datos.length; i++){
+                    if (i == 20) {
+                        break;
+                    }else{
+                        document.getElementById('listaRankingNacional').innerHTML += "<li>"+ String(i+1) + "----" + String(datos[i].paciente) + "----"+  String(datos[i].valor) +"</li>"
+                    }
+                }
+            }else{
+                alert("Error en el envio de los datos al ministerio...");
+            }
+        });
+    }else{
+        alert("Debe seleccionar variable y comunidad autonoma.");
+    }
+}
 
 
 
@@ -171,7 +334,14 @@ function eliminarMain(idValor){
 
 
 
-///////////////////////////////////////////////////////////////////////////////////7
+
+
+
+
+
+
+
+
 
 
 
@@ -235,7 +405,7 @@ function openWs(){
     // Connection opened 
     //con esto le digo al server que estoy conectado
     conexion.addEventListener('open', function (event) {
-        console.log("SOY EL WEBSOCKET MAIN!!!");
+        //console.log("SOY EL WEBSOCKET MAIN!!!");
         //le envio solo el rol de apciente porque desde este
         //Cliente solo entran pacientes
         conexion.send(JSON.stringify({operacion:"login",rol:"paciente",idMedico:idMedicoGlobal,idPaciente:idPacienteGlobal}));
@@ -251,7 +421,7 @@ function openWs(){
             case "notificar":
                 var mensajeEmergente=msg.nombre+" ha compartido contigo que el día " + msg.muestra.fechaMuestra
                     +" realizó la actividad "+  msg.variable + " y obtuvo un valor de " +msg.muestra.valorMuestra;
-                alert(mensajeEmergente);      
+                alert(mensajeEmergente);
                 break;
         }        
     });
@@ -282,51 +452,3 @@ function enviar(){
     alert("Has compartido tu logro!");
     cambiarSeccion("listaPacientes");
 }
-
-
-
-
-
-
-//empezamos con el bluetootht
-
-
-
-//EMPEZAMOS CON EL BLUETOOTH
-
-function tomarPeso(){
-    bluetoothle.initialize(function (result) {
-        if (result.status === "enabled") {
-        console.log("Bluetooth encendido");
-        } else {
-        console.og("Bluetooth apagado:");
-        } 
-        },function (error) {
-        console.log("Error inicializando BLE", error);
-        }, { request: true, statusReceiver: false });
-        
-
-    bluetoothle.connect(function (result) {
-        if (result.status === "connected") {
-        console.log("Termometro conectado");
-        }
-        else if (result.status === "disconnected") {
-        console.log("Termometro desconectado");
-        }
-        }, function (error) {
-        console.log("Error conectando:", error);
-        }, { address: "B4:99:4C:5A:BB:CD" });
-
-    bluetoothle.discover(function (result) {
-        if (result.status === "discovered") {
-        log("Servicios descubiertos. Ya puedo leer");
-        }
-        }, function (error) {
-        console.log("Error descubriendo:", error);
-        }, { address: "B4:99:4C:5A:BB:CD" });
-} 
-
-
-
-
-

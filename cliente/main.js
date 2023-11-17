@@ -9,6 +9,7 @@ var idPacienteGlobal;
 //creo la ocnexion para el ws
 var conexion ="";
 
+var token = null;
 
 
 //fuciones para salir etc...
@@ -44,15 +45,14 @@ function controlarAcceso(){
     //desde esta ruta le mando log al server para validar los datos
     //el callback se ejecuta cuadno deeuvlo un estado y respuesta
     rest.post("/api/medico/login", log, function (estado, envioMedico) {
-        if(estado == 200){
-            //el id del medico global
-            let medicoParseado = JSON.parse(JSON.stringify(envioMedico))[0];
-            //console.log("con parse",medicoParseado);
-            idMedicoGlobal=medicoParseado.idMedico;
+        if(estado == 200){         
+            idMedicoGlobal=envioMedico.medico[0].idMedico;
+            //me guardo el token 
+            token = envioMedico.token;
             openWsMedico();
             cambiarSeccion("listado");
             var welcome= document.getElementById("bienvenida");
-            welcome.innerHTML="Bienvenido al menu principal: " + medicoParseado.nombreMedico +"<br>" +" "+ "Estos son tus pacientes: ";
+            welcome.innerHTML="Bienvenido al menu principal: " + envioMedico.medico[0].nombreMedico +"<br>" +" "+ "Estos son tus pacientes: ";
             //repsuesta==id del medico que me devuelve el servidor
             mostrarPacientes(idMedicoGlobal);
         }else{
@@ -67,11 +67,11 @@ function controlarAcceso(){
 //le debo pasar el id del medico como parametro para poder crear la url 
 function mostrarPacientes(id){
     //console.log("Este es el id del medico en la funcion de la llamada: ", id);
-    rest.get("/api/medico/"+id+"/pacientes", function(estado, newPac){
+    rest.get("/api/medico/"+id+"/pacientes?token="+token, function(estado, newPac){
         if (estado != 200) {
             //alert("Error cargando la lsita de pacientes");
         }
-        //console.log("estos son los pacientes de ese medico:",newPac);
+        console.log("estos son los pacientes de ese medico:",newPac);
         var lista = document.getElementById("pacientes");
         lista.innerHTML = "";  
         for (var i = 0; i < newPac.length; i++) {
@@ -86,7 +86,7 @@ function imprimirVariablesPaciente(id){
     var idactualMuestra;
     cambiarSeccion("expedientePac");
     imprimirDatosPaciente(id);
-    rest.get("/api/paciente/"+id+'/muestras', (estado, muestrasPaciente) => {
+    rest.get("/api/paciente/"+id+'/muestras?token='+token, (estado, muestrasPaciente) => {
         //console.log("Muestras de ese paciente: ",muestrasPaciente);
         var arrayVari=muestrasPaciente;
             if (estado != 200) {
@@ -105,7 +105,7 @@ function imprimirVariablesPaciente(id){
 function imprimirDatosPaciente(id){
     idPacienteGlobal=id;
     //cambiarSeccion("expedientePac");
-    rest.get("/api/paciente/"+id , (estado, datosPaciente) => {
+    rest.get("/api/paciente/"+id+"?token="+token , (estado, datosPaciente) => {
         //console.log("datos del paciente:",datosPaciente);
          if (estado != 200) {
              alert("Error cargando el paciente");
@@ -140,7 +140,7 @@ function agregarPaciente(){
         alert("Rellene todos los campos");
     }else{        
         // console.log(nuevoPaciente);
-        rest.post("/api/medico/"+idMedicoGlobal+"/pacientes", nuevoPaciente, (estado,respuesta) => {
+        rest.post("/api/medico/"+idMedicoGlobal+"/pacientes?token="+token, nuevoPaciente, (estado,respuesta) => {
             if (estado == 201) {
                 //medicoGlobal== id del medico que acutalmente está en el sistema
                 alert("Se ha añadido un nuevo paciente!");
@@ -175,7 +175,7 @@ function modificarDatos(id){
     alert("Rellene todos los campos");
     }else{
         //console.log("Este es el nuevo paciente: ",nuevoPaciente);
-        rest.put("/api/paciente/"+id , nuevoPaciente, (estado,respuesta) => {
+        rest.put("/api/paciente/"+id+"?token="+token , nuevoPaciente, (estado,respuesta) => {
             //como cuando le envio al servidor los nuevos datos del apc se actualiza sola 
             //la bbdd no tengo que hacer nada con la respuesta que me envía el servidor.
            if (estado == 201) {
@@ -198,7 +198,7 @@ function modificarDatos(id){
 function Filtrar(){
     var listafiltrar= document.getElementById('listaVariables1').value;
     //console.log("Esta es la variable a filtrar: ",listafiltrar)
-    rest.get("/api/paciente/"+idPacienteGlobal+"/muestras/"+listafiltrar , (estado, respuesta) => {
+    rest.get("/api/paciente/"+idPacienteGlobal+"/muestras/"+listafiltrar+"?token="+token , (estado, respuesta) => {
          if (estado != 200) {
              alert("NO existen muestras para esas variables.");
          }
@@ -219,31 +219,13 @@ function Filtrar(){
 }
 
 
-
-
-/*
-function duplicar(idPac){
-    rest.post("/api/paciente/"+idPac+"/duplicar",function(estado,respuesta){
-        console.log("estoy aqui");
-        if(estado==200){
-            cambiarSeccion("listado");
-            mostrarPacientes(idMedicoGlobal);
-        }else{
-            alert("error no se ha duplicado el apciente");
-        }
-    });
-}*/
-
-
-
-
 //web socket para el medico
 
 function openWsMedico(){
     conexion = new WebSocket('ws://localhost:4444', "pacientes");
     //con esto le digo al server que estoy conectado
     conexion.addEventListener('open', function (event) {
-        console.log("SOY EL WEBSOCKET MEDICO!!!");
+        //console.log("SOY EL WEBSOCKET MEDICO!!!");
         conexion.send(JSON.stringify({operacion:"login",rol:"medico",id:idMedicoGlobal}));
     }); // Connection opened 
 

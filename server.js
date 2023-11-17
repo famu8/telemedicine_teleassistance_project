@@ -5,7 +5,10 @@ var app = express();
 app.use("/cliente", express.static("cliente"));
 app.use("/paciente", express.static("paciente"));
 
-app.use(express.json()); // en el req.body tengamos el body JSON
+var jwt = require('jwt-simple');
+var clave = 'miSecreto';
+
+app.use("/", express.json()); // en el req.body tengamos el body JSON
 //sentencias necesarias para crear la zona rpc del servidor 
 //var servidor = rpc.server();
 //var app = servidor.createApp("MiGestionPacientes");
@@ -43,7 +46,7 @@ connection.connect((err)=>{
 
 
 
-//// PARTE DEL SERVIDOR DEL MEDICO/////
+//// PARTE DEL SERVIDOR DEL MEDICO///
 //ARRAY VARIABLES DE LA APP
 
 //Obtiene un array con todas las variables
@@ -68,15 +71,53 @@ app.post("/api/medico/login",(req,res)=>{
     };
     var sql = "SELECT idMedico, nombreMedico FROM medicos WHERE nombreUsuario='"+medicoActual.login+"' AND contrasenyaMedico='"+medicoActual.pass+"'";
     connection.query(sql,  function(err, medico)  {
+        console.log(medico);
         if(err){
             console.log('Error en la obtencion de medicos: ', err);
             res.status(403).json("Validacion incorrecta");
         } else{
-            console.log("este es el medico: ", medico)
-            res.status(200).json(medico);
+            var contenido = {
+                usuario: medico[0].idMedico,
+                expira: Date.now() + 60 * 60 * 1000 
+            };
+            var token = jwt.encode(contenido, clave);
+            res.status(200).json({token:token, medico:medico});
         }
     });
 });
+
+app.use("/api", function (req, res, next) {
+    var token = req.query.token; // obtengo el token de una query de la URL: http://MI_SERVIDOR/MI_RUTA?token=XXXXXXXX
+    if (!token) { // no se ha pasado un token
+        res.status(301).json("No se ha encontrado token");
+        return;
+    }
+
+    // Decodificar el token
+    try { // capturamos el error por si el token no es correcto
+        var contenidoToken = jwt.decode(token, clave); // decodificamos el token para obtener su contenido con la misma clave que se codificó
+    } catch (error) {
+        res.status(301).json("El token es incorrecto");
+        return;
+    }
+    console.log("El contenido del token es:", contenidoToken);
+
+    // Validar el token
+    if (!contenidoToken || !contenidoToken.expira || !contenidoToken.usuario) { // validamos el formato del token
+        res.status(301).json("El formato del token no es adecuado")
+        return;
+    }
+
+    // Comprobar la fecha de expiración
+    if (contenidoToken.expira < Date.now()) {
+        res.status(301).json("El token ha expirado");
+        return
+    }
+    // Todo ha ido bien. con next hago que express continue con el procesado
+    next();
+});
+
+
 
 //MOSTRAR PACIENES POR ID DEL MEDICO
 app.get("/api/medico/:id/pacientes",function(req,res){
@@ -86,7 +127,6 @@ app.get("/api/medico/:id/pacientes",function(req,res){
             console.log('Error en la obtencion de pacientes: ', err);
         }else{
             res.status(200).json(pacientes);
-            return;        
         }   
     });
 });
@@ -195,15 +235,6 @@ app.put("/api/hospitales/:idHospital/medico/:id",(req,res)=>{
         }   
     });
 });
-
-
-
-
-
-
-
-
-
 
 
 
